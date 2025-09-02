@@ -1,0 +1,37 @@
+# 线上配置文件
+# @author <a href="https://github.com/liyupi">程序员鱼皮</a>
+# @from <a href="https://yupi.icu">编程导航知识星球</a>
+server:
+  port: 8101
+spring:
+  # 数据库配置
+  # todo 需替换配置
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://144.34.224.28/:5432/postgres?useUnicode=true&characterEncoding=utf8&ssl=false
+    username: postgres  # PostgreSQL默认用户名
+    password: '041365yuanRUN'  # 你的PostgreSQL密码
+  # Redis 配置
+  # todo 需替换配置
+  redis:
+    database: 1
+    host: 144.34.224.28
+    port: 6379
+    timeout: 5000
+    password: redis_77xrEk
+  # Elasticsearch 配置
+  # todo 需替换配置
+  elasticsearch:
+    uris: http://localhost:9200
+    username: root
+    password: 041365yuanRUN
+mybatis-plus:
+  configuration:
+    # 生产环境关闭日志
+    log-impl: ''
+# 接口文档配置
+knife4j:
+  basic:
+    enable: true
+    username: root
+    password: 041365yuanRUN

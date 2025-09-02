@@ -1,0 +1,42 @@
+package com.yupi.springbootinit.model.vo;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+import com.baomidou.mybatisplus.annotation.*;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * 新闻
+ *
+ * @author frk frk@126.com
+ * @since 1.0.0 2025-08-08
+ */
+
+@Data
+@TableName("news")
+public class NewsVo implements Serializable {
+	private static final long serialVersionUID = 1L;
+	/**
+	* id
+	*/
+	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	private Long id;
+	/**
+	* 缩略图URL
+	*/
+	private String thumbnail;
+	/**
+	* 内容标题
+	*/
+	private String homeTitle;
+	/**
+	* 内容分类
+	*/
+	private String category;
+	/**
+	 * 内容
+	 */
+	private String homeDeatil;
+}
