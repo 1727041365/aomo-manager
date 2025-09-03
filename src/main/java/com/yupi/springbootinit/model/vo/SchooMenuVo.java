@@ -1,28 +1,13 @@
-package com.yupi.springbootinit.model.dto;
+package com.yupi.springbootinit.model.vo;
 
-import com.baomidou.mybatisplus.annotation.*;
+
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-import java.io.Serializable;
-import java.util.Date;
 
+import java.io.Serializable;
 @Data
-public class SchoolDto implements Serializable {
+public class SchooMenuVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 学校全称（含校区）
-     */
-    private String schoolFullName;
-
-    /**
-     * 地区
-     */
-    private String areaName;
-    /**
-     * 简介
-     */
-    private String introduction;
     /**
      * 是否有汉语言（0：无，1：有）
      */
@@ -32,6 +17,7 @@ public class SchoolDto implements Serializable {
      * 是否有博士学位（0：无，1：有）
      */
     private Integer isPhd;
+
     /**
      * 是否有学士学位（0：无，1：有）
      */
@@ -41,4 +27,5 @@ public class SchoolDto implements Serializable {
      * 是否有硕士学位（0：无，1：有）
      */
     private Integer isMasterDegree;
+
 }

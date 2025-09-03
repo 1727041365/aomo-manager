@@ -3,7 +3,6 @@ package com.yupi.springbootinit.controller;
 import com.yupi.springbootinit.common.BaseResponse;
 import com.yupi.springbootinit.common.ErrorCode;
 import com.yupi.springbootinit.common.ResultUtils;
-import com.yupi.springbootinit.model.dto.SchoolDto;
 import com.yupi.springbootinit.model.entity.Area;
 import com.yupi.springbootinit.service.AreaService;
 import com.yupi.springbootinit.service.SchoolService;

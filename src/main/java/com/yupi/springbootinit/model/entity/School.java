@@ -41,7 +41,10 @@ public class School implements Serializable {
      * 关联地区ID（外键）
      */
     private Long areaId;
-
+    /**
+     * 关联地区首字母
+     */
+    private String areaInital;
     /**
      * 是否有汉语言（0：无，1：有）
      */
