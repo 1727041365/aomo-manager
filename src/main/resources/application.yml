@@ -56,8 +56,8 @@ spring:
   servlet:
     multipart:
       # 大小限制
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: 300MB
+      max-request-size: 300MB
 server:
   address: 0.0.0.0
   port: 8108
@@ -68,6 +68,7 @@ server:
       cookie:
         max-age: 2592000
 mybatis-plus:
+  type-handlers-package: com.yupi.springbootinit.config
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
