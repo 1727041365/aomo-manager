@@ -9,10 +9,10 @@ import java.util.UUID;
 public class VideoUploadUtil {
 
     // 视频保存路径（实际项目建议配置在 application.properties 中）
-    private static final String VIDEO_SAVE_PATH = "C:/school/video/";
+    private static final String VIDEO_SAVE_PATH = "./school/video/";
 
     // 视频访问URL前缀（用于拼接最终访问路径）
-    private static final String VIDEO_ACCESS_PREFIX = "http://localhost:8108/video/";
+    private static final String VIDEO_ACCESS_PREFIX = "https://manager.impactflowth.org/aomoVideo/";
 
     /**
      * 保存上传的视频文件并压缩

@@ -21,19 +21,19 @@ spring:
   # todo 需替换配置
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/aomo?useUnicode=true&characterEncoding=utf8&ssl=false
-    username: postgres  # PostgreSQL默认用户名
-    password: '041365'  # 你的PostgreSQL密码
+    url: jdbc:postgresql://144.34.224.28:5432/aomo?useUnicode=true&characterEncoding=utf8&ssl=false
+    username: root  # PostgreSQL默认用户名
+    password: '041365yuanRUN'  # 你的PostgreSQL密码
   # redis 配置
   redis:
     # 地址
-    host: localhost
+    host: 144.34.224.28
     # 端口，默认为6379
     port: 6379
     # 数据库索引
     database: 0
     # 密码
-    password:
+    password: redis_77xrEk
     # 连接超时时间
     timeout: 10s
     lettuce:

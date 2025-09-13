@@ -9,7 +9,6 @@ import com.yupi.springbootinit.model.dto.school.CityCarouselDto;
 import com.yupi.springbootinit.model.entity.CityCarousel;
 import com.yupi.springbootinit.model.vo.CityCarouselVo;
 import com.yupi.springbootinit.service.CityCarouselService;
-import com.yupi.springbootinit.utils.ImageUploadUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;

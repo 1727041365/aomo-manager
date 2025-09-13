@@ -22,13 +22,13 @@ import java.util.*;
 public class ImageUploadUtil {
 
     // 图片保存路径（实际项目建议配置在 application.properties 中）
-    private static final String IMAGE_SAVE_PATH = "C:/school/img/";
+    private static final String IMAGE_SAVE_PATH = "./school/img/";
     // 视频保存路径（实际项目建议配置在 application.properties 中）
-    private static final String VIDEO_SAVE_PATH = "C:/school/video/";
+    private static final String VIDEO_SAVE_PATH = "./school/video/";
     // 图片访问URL前缀（用于拼接最终访问路径）
-    private static final String IMAGE_ACCESS_PREFIX = "http://localhost:8108/images/";
+    private static final String IMAGE_ACCESS_PREFIX = "https://manager.impactflowth.org/aomoImages/";
     // 视频访问URL前缀（用于拼接最终访问路径）
-    private static final String VIDEO_ACCESS_PREFIX = "http://localhost:8108/video/";
+    private static final String VIDEO_ACCESS_PREFIX = "https://manager.impactflowth.org/aomoVideo/";
     /**
      * 保存上传的单张图片
      * @param imageFile 前端上传的图片文件（MultipartFile 类型）
