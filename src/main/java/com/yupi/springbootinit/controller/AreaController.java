@@ -4,6 +4,7 @@ import com.yupi.springbootinit.common.BaseResponse;
 import com.yupi.springbootinit.common.ErrorCode;
 import com.yupi.springbootinit.common.ResultUtils;
 import com.yupi.springbootinit.model.entity.Area;
+import com.yupi.springbootinit.model.vo.AreaVo;
 import com.yupi.springbootinit.service.AreaService;
 import com.yupi.springbootinit.service.SchoolService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -24,6 +27,20 @@ public class AreaController {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @GetMapping("/get")
+    public BaseResponse< ArrayList<AreaVo>> getArea() {
+        //获取所有地区信息
+        List<Area> list = areaService.list();
+        ArrayList<AreaVo> areaVos = new ArrayList<>();
+        list.forEach(item -> {
+            AreaVo areaVo = new AreaVo();
+            areaVo.setAreaName(item.getAreaName());
+            areaVo.setAreaInitial(item.getAreaInitial());
+            areaVo.setCreateTime(item.getCreateTime());
+            areaVos.add(areaVo);
+        });
+        return ResultUtils.success(areaVos);
+    }
     /**
      * 创建地区
      */
@@ -41,6 +58,7 @@ public class AreaController {
             }
             char firstChar = areaName.charAt(0);
             String firstLetter = String.valueOf(Character.toUpperCase(firstChar));
+            areaName=areaName.toLowerCase();
             // 使用 firstLetter 变量作为首字母大写的结果
             Date date = new Date();
             Area area = new Area();

@@ -2,17 +2,20 @@ package com.yupi.springbootinit.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Base64;
 import java.util.UUID;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.*;
 
 /**
@@ -22,51 +25,50 @@ import java.util.*;
 public class ImageUploadUtil {
 
     // 图片保存路径（实际项目建议配置在 application.properties 中）
-    private static final String IMAGE_SAVE_PATH = "./school/img/";
+    private static final String IMAGE_SAVE_PATH = System.getProperty("user.dir") + "/school/img/";
     // 视频保存路径（实际项目建议配置在 application.properties 中）
-    private static final String VIDEO_SAVE_PATH = "./school/video/";
+    private static final String VIDEO_SAVE_PATH = System.getProperty("user.dir") + "./school/video/";
     // 图片访问URL前缀（用于拼接最终访问路径）
     private static final String IMAGE_ACCESS_PREFIX = "https://manager.impactflowth.org/aomoImages/";
     // 视频访问URL前缀（用于拼接最终访问路径）
     private static final String VIDEO_ACCESS_PREFIX = "https://manager.impactflowth.org/aomoVideo/";
+
     /**
      * 保存上传的单张图片
+     *
      * @param imageFile 前端上传的图片文件（MultipartFile 类型）
      * @return 图片在服务器的访问路径，若失败则返回 null
      */
     public static String saveSingleImage(MultipartFile imageFile) {
-        // 参数校验：文件为空或无文件名时直接返回
         if (imageFile == null || imageFile.isEmpty()) {
             return null;
         }
         try {
-            // 获取原始文件名（用于提取后缀）
             String originalFilename = imageFile.getOriginalFilename();
             if (originalFilename == null) {
                 return null;
             }
             String suffix = originalFilename.substring(originalFilename.lastIndexOf("."));
-            // 生成唯一文件名（避免重复）
             String fileName = UUID.randomUUID().toString() + suffix;
             String fullPath = IMAGE_SAVE_PATH + fileName;
-            // 创建保存目录（如果不存在）
+            log.info("保存路径: {}", IMAGE_SAVE_PATH);
             File dir = new File(IMAGE_SAVE_PATH);
-            if (!dir.exists()) {
-                boolean mkdirsResult = dir.mkdirs();
-                if (!mkdirsResult) {
-                    throw new RuntimeException("创建图片保存目录失败：" + IMAGE_SAVE_PATH);
-                }
+            log.info("尝试创建目录: {}, 当前是否存在: {}", dir.getAbsolutePath(), dir.exists());
+
+            if (!dir.exists() && !dir.mkdirs()) {
+                log.error("创建图片保存目录失败: {}", dir.getAbsolutePath());
+                return null;
             }
-            // 将 MultipartFile 写入目标文件
+
             imageFile.transferTo(new File(fullPath));
-            // 拼接并返回可访问的图片URL
+            log.info("图片保存成功: {}", fullPath);
             return IMAGE_ACCESS_PREFIX + fileName;
         } catch (IOException e) {
-            // 实际项目中建议用日志框架（如 Slf4j）记录异常
-            e.printStackTrace();
+            log.error("保存图片失败", e);
             return null;
         }
     }
+
 
     /**
      * 解析富文本中的图片并保存，替换为服务器上的图片路径
@@ -168,6 +170,7 @@ public class ImageUploadUtil {
 
     /**
      * 保存上传的视频文件
+     *
      * @param videoFile 前端上传的视频文件（MultipartFile 类型）
      * @return 视频在服务器的访问路径，若失败则返回 null
      */

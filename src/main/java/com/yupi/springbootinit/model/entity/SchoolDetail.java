@@ -18,10 +18,10 @@ public class SchoolDetail implements Serializable {
     /**
      * id
      */
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(value = "school_detail_id",type = IdType.ASSIGN_ID)
     private Long schoolDetailId;
     /**
-     * 学校id
+     * 学校name
      */
     private Long schoolId;
     /**

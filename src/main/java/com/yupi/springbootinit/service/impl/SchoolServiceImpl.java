@@ -1,6 +1,7 @@
 package com.yupi.springbootinit.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yupi.springbootinit.mapper.SchoolMapper;
@@ -29,7 +30,7 @@ public class SchoolServiceImpl extends ServiceImpl<SchoolMapper, School> impleme
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean saveSchool(SchoolDto schoolDto, MultipartFile imageFile) {
-        String areaName = schoolDto.getAreaName();
+        String areaName = schoolDto.getAreaName().toLowerCase();
         char c = areaName.charAt(0);
         String firstLetter = String.valueOf(Character.toUpperCase(c));
         if (!firstLetter.matches("[A-Z]")) {
@@ -39,22 +40,45 @@ public class SchoolServiceImpl extends ServiceImpl<SchoolMapper, School> impleme
         if (areaName == null || areaName.isEmpty() || areaId <= 0) {
             throw new RuntimeException("地区不存在,请先添加地区");
         }
-        School school = new School();
+
         String schoolFullName = schoolDto.getSchoolFullName();
         School one = this.getOne(Wrappers.lambdaQuery(School.class).eq(School::getSchoolFullName, schoolFullName));
+
+        // 先复制属性，避免被覆盖
+        School school = new School();
+        BeanUtils.copyProperties(schoolDto, school, (String[]) null);
+
+        char firstChar = schoolFullName.charAt(0);
+        String first = String.valueOf(Character.toUpperCase(firstChar));
+
         if (one == null) {
+            // 新增学校
             String imgString = ImageUploadUtil.saveSingleImage(imageFile);
             school.setSchoolImg(imgString);
-            char firstChar = schoolFullName.charAt(0);
-            String first = String.valueOf(Character.toUpperCase(firstChar));
-            BeanUtils.copyProperties(schoolDto, school);
             school.setAreaInital(firstLetter);
             school.setSchoolInitial(first);
             school.setAreaId(areaId);
             school.setCreateTime(new Date());
             return this.save(school);
         } else {
-            throw new RuntimeException("学校已存在");
+            // 更新学校
+            // 处理图片：如果有新图片则使用新图片，否则保留原图片
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String imgString = ImageUploadUtil.saveSingleImage(imageFile);
+                if (imgString != null) {
+                    school.setSchoolImg(imgString);
+                } else {
+                    school.setSchoolImg(one.getSchoolImg()); // 保留原图
+                }
+            } else {
+                school.setSchoolImg(one.getSchoolImg()); // 保留原图
+            }
+            school.setAreaInital(firstLetter);
+            school.setSchoolInitial(first);
+            school.setAreaId(areaId);
+            school.setSchoolId(one.getSchoolId()); // 设置主键
+            school.setUpdateTime(new Date());
+            return this.updateById(school);
         }
     }
 
@@ -62,17 +86,37 @@ public class SchoolServiceImpl extends ServiceImpl<SchoolMapper, School> impleme
     public List<SchoolVo> getSearchList(SchoolSearchDto schoolSearchDto) {
         LambdaQueryWrapper<School> wrapper = new LambdaQueryWrapper<>();
         // 处理Programs搜索条件
-        handleProgramsCondition(schoolSearchDto, wrapper);
+
+        List<String> programs =schoolSearchDto.getSearchPrograms();
+        if (programs != null && !programs.isEmpty()) {
+            handleProgramsCondition(schoolSearchDto, wrapper);
+        }
         // 处理大学名称首字母搜索条件
         handleUniversityNameCondition(schoolSearchDto, wrapper);
         // 处理城市首字母搜索条件
         handleCitiesCondition(schoolSearchDto, wrapper);
         // 处理热门城市搜索条件
         handlePopularCitiesCondition(schoolSearchDto, wrapper);
+
         // 直接流式处理转换，避免中间集合存储
-        return this.list(wrapper).stream()
-                .map(this::convertToSchoolVo)
+        List<SchoolVo> collect = this.list(wrapper).stream()
+                .map(school -> convertToSchoolVo(school,programs))
                 .collect(Collectors.toList());
+        schoolSearchDto.getSearchPrograms();
+        return collect;
+    }
+/**
+ * 获取模糊搜索结果
+ * @param schoolName
+ * @return
+ */
+    @Override
+    public List<SchoolVo> getLike(String schoolName) {
+        QueryWrapper<School> queryWrapper = new QueryWrapper<>();
+        // 对学校全称进行模糊查询，忽略逻辑删除的记录
+        queryWrapper.like("school_full_name", schoolName)
+                .eq("is_delete", 0);
+        return this.list(queryWrapper).stream().map(this::convertToVo).collect(Collectors.toList());
     }
 
     // 拆分处理方法，避免单个方法内创建过多临时对象
@@ -81,7 +125,6 @@ public class SchoolServiceImpl extends ServiceImpl<SchoolMapper, School> impleme
         if (programs == null || programs.isEmpty()) {
             return;
         }
-
         wrapper.and(w -> {
             for (String program : programs) {
                 switch (program) {
@@ -162,7 +205,37 @@ public class SchoolServiceImpl extends ServiceImpl<SchoolMapper, School> impleme
     }
 
     // 单独的转换方法，避免在流中创建匿名对象
-    private SchoolVo convertToSchoolVo(School school) {
+    private SchoolVo convertToSchoolVo(School school,List<String>programs) {
+        SchoolVo vo = new SchoolVo();
+        BeanUtils.copyProperties(school, vo);
+        // 如果有搜索programs条件，则将未被搜索的字段设置为0
+        if (programs != null && !programs.isEmpty()){
+            // 将所有program相关字段初始化为0
+            vo.setIsNonDegree(0);
+            vo.setIsBachelorDegree(0);
+            vo.setIsMasterDegree(0);
+            vo.setIsPhd(0);
+            for (String program : programs) {
+                switch (program) {
+                    case "Non Degree":
+                        vo.setIsNonDegree(school.getIsNonDegree());
+                        break;
+                    case "Bachelor Degree":
+                        vo.setIsBachelorDegree(school.getIsBachelorDegree());
+                        break;
+                    case "Master Degree":
+                        vo.setIsMasterDegree(school.getIsMasterDegree());
+                        break;
+                    case "PhD":
+                        vo.setIsPhd(school.getIsPhd());
+                        break;
+                }
+            }
+        }
+        return vo;
+    }
+    // 单独的转换方法，避免在流中创建匿名对象
+    private SchoolVo convertToVo(School school) {
         SchoolVo vo = new SchoolVo();
         BeanUtils.copyProperties(school, vo);
         return vo;

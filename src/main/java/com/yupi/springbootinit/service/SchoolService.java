@@ -13,4 +13,6 @@ public interface SchoolService extends IService<School> {
     Boolean saveSchool(SchoolDto schoolDto, MultipartFile imageFile);
 
     List<SchoolVo> getSearchList(SchoolSearchDto schoolSearchDto);
+
+    List<SchoolVo> getLike(String schoolName);
 }

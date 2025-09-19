@@ -17,7 +17,7 @@ public class School implements Serializable {
     /**
      * 学校唯一ID（主键）
      */
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(value = "school_id",type = IdType.ASSIGN_ID)
     private Long schoolId;
 
     /**

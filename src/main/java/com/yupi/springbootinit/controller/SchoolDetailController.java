@@ -32,19 +32,10 @@ public class SchoolDetailController {
     public record Scenery(Long id, String schoolScenery) {}
     @PostMapping("/create")
     public BaseResponse<String> create(@RequestBody SchoolInfoDTO schoolInfoDTO) throws Exception {
-        Long schoolId = schoolInfoDTO.getSchoolId();
-        if (schoolId==null||schoolId<=0){
-            return ResultUtils.error(ErrorCode.PARAMS_ERROR,"id参数为空");
-        }
-        if (schoolInfoDTO.getSchoolLogo() == null || schoolInfoDTO.getSchoolLogo().isEmpty()) {
-            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "logo没有上传");
-        }
-        if (schoolInfoDTO.getSchoolIntroduction()==null||schoolInfoDTO.getSchoolIntroduction().isEmpty()){
-            return ResultUtils.error(ErrorCode.PARAMS_ERROR,"学校介绍没有上传");
-        }
-        if (schoolInfoDTO.getSchoolScenery() == null || schoolInfoDTO.getSchoolScenery().isEmpty()) {
-            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "学校风景没有上传");
-        }
+       if (schoolInfoDTO.getSchoolId()==null){
+           return ResultUtils.error(ErrorCode.PARAMS_ERROR,"id参数为空");
+       }
+            schoolInfoDTO.setSceneryVideo("videoNull");
         Boolean result = schoolDetailService.saveDetail(schoolInfoDTO);
         if ( result){
             return ResultUtils.success("创建成功");

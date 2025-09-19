@@ -33,8 +33,8 @@ public class SchoolProgramsController {
     private AreaService areaService;
 
     @GetMapping("get")
-    public BaseResponse<List<SchoolVo>> get(@RequestParam("pageName") long pagename, @RequestParam("pageSize") long pageSize) {
-        Page<School> schoolPage = new Page<>(pagename, pageSize);
+    public BaseResponse<List<SchoolVo>> get(@RequestParam("pageName") long pageName, @RequestParam("pageSize") long pageSize) {
+        Page<School> schoolPage = new Page<>(pageName, pageSize);
         // 执行分页查询
         Page<School> resultPage = schoolService.page(schoolPage);
         List<SchoolVo> schoolVoList = resultPage.getRecords().stream().map(item -> {
@@ -53,13 +53,14 @@ public class SchoolProgramsController {
         List<SchoolVo> schoolVo = schoolService.getSearchList(schoolSearchDto);
         return ResultUtils.success(schoolVo);
     }
+
     @GetMapping("/getMenu")
-    public BaseResponse<SchooMenuVo> getMenu(@RequestParam("schoolId") String id ) {
+    public BaseResponse<SchooMenuVo> getMenu(@RequestParam("schoolId") String id) {
         if (id == null) {
             return ResultUtils.error(ErrorCode.PARAMS_ERROR, "参数为空");
         }
         long l = Long.parseLong(id);
-        School school = schoolService.getById( l);
+        School school = schoolService.getById(l);
         SchooMenuVo schoolMenuVo = new SchooMenuVo();
         BeanUtils.copyProperties(school, schoolMenuVo);
         return ResultUtils.success(schoolMenuVo);
@@ -90,6 +91,27 @@ public class SchoolProgramsController {
         }
     }
 
+    /**
+     * 模糊查询学校信息
+     *
+     * @param schoolName
+     * @return
+     */
+    @PostMapping("/like")
+    public BaseResponse<List<SchoolVo>> like(@RequestParam String schoolName) {
+        if (schoolName == null) {
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "参数为空");
+        }
+        if (!schoolName.matches("^[a-zA-Z0-9\\s]+$")) {
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "参数只能包含字母、数字和空格");
+        }
+        if ("Xian".equals(schoolName)||"xian".equals(schoolName)){
+            schoolName="Xi'an";
+        }
+        //模糊查询学校
+        List<SchoolVo> schoolVo = schoolService.getLike(schoolName);
+        return ResultUtils.success(schoolVo);
+    }
 
     @PostMapping("/delete")
     public BaseResponse<String> delete(@RequestParam("schoolFullName") String schoolFullName) {

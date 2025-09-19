@@ -19,11 +19,20 @@ public class SchoolDetailServiceImpl extends ServiceImpl<SchoolDetailMapper, Sch
     public Boolean saveDetail(SchoolInfoDTO schoolInfoDTO) throws Exception {
         SchoolDetail schoolDetail = new SchoolDetail();
         schoolDetail.setSchoolId(schoolInfoDTO.getSchoolId());
-        schoolDetail.setSchoolLogo(schoolInfoDTO.getSchoolLogo());
-        String scenery = schoolInfoDTO.getSceneryVideo()+","+ImageUploadUtil.parseAndSaveImages(schoolInfoDTO.getSchoolScenery());
-        String introduction = ImageUploadUtil.parseAndSaveImages(schoolInfoDTO.getSchoolIntroduction());
-        schoolDetail.setSchoolScenery(scenery);
-        schoolDetail.setSchoolIntroduction(introduction);
+        if (schoolInfoDTO.getSchoolLogo() != null && !schoolInfoDTO.getSchoolLogo().isEmpty()){
+            schoolDetail.setSchoolLogo(schoolInfoDTO.getSchoolLogo());
+        }
+        boolean empty = schoolInfoDTO.getSchoolScenery().isEmpty();
+        if (!empty)
+        {
+            String scenery = schoolInfoDTO.getSceneryVideo()+","+ImageUploadUtil.parseAndSaveImages(schoolInfoDTO.getSchoolScenery());
+            schoolDetail.setSchoolScenery(scenery);
+        }
+        boolean empty1 = schoolInfoDTO.getSchoolIntroduction().isEmpty();
+        if (!empty1){
+            String introduction = ImageUploadUtil.parseAndSaveImages(schoolInfoDTO.getSchoolIntroduction());
+            schoolDetail.setSchoolIntroduction(introduction);
+        }
         schoolDetail.setCreateTime(new Date());
         schoolDetail.setUpdateTime(new Date());
         if (schoolInfoDTO.getBachelorDegree() != null && !schoolInfoDTO.getBachelorDegree().isEmpty()) {
@@ -45,6 +54,7 @@ public class SchoolDetailServiceImpl extends ServiceImpl<SchoolDetailMapper, Sch
         SchoolDetail one = this.getOne(Wrappers.lambdaQuery(SchoolDetail.class).eq(SchoolDetail::getSchoolId, schoolInfoDTO.getSchoolId()));
         if (one != null){
            schoolDetail.setSchoolDetailId(one.getSchoolDetailId());
+           schoolDetail.setUpdateTime(new Date());
            return this.updateById(schoolDetail);
         }else {
             return this.save(schoolDetail);
