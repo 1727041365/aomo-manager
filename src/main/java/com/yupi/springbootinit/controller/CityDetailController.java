@@ -1,5 +1,6 @@
 package com.yupi.springbootinit.controller;
 
+import com.yupi.springbootinit.annotation.IpWhitelist;
 import com.yupi.springbootinit.common.BaseResponse;
 import com.yupi.springbootinit.common.ErrorCode;
 import com.yupi.springbootinit.common.ResultUtils;
@@ -23,6 +24,7 @@ public class CityDetailController {
     }
 
     @RequestMapping("/create")
+    @IpWhitelist({"144.34.224.28"})
     public BaseResponse<String> saveCityDetail(@RequestBody CityDetailDto cityDetailDto) throws Exception {
         Boolean result = cityDetailService.saveOrUpdate(cityDetailDto);
         if (result) {

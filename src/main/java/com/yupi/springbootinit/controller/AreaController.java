@@ -1,5 +1,6 @@
 package com.yupi.springbootinit.controller;
 
+import com.yupi.springbootinit.annotation.IpWhitelist;
 import com.yupi.springbootinit.common.BaseResponse;
 import com.yupi.springbootinit.common.ErrorCode;
 import com.yupi.springbootinit.common.ResultUtils;
@@ -45,6 +46,7 @@ public class AreaController {
      * 创建地区
      */
     @PostMapping("/create")
+    @IpWhitelist({"144.34.224.28"})
     public BaseResponse<String> createArea(@RequestParam String areaName ) {
         if (areaName != null && !areaName.isEmpty()) {
             schoolService.list();

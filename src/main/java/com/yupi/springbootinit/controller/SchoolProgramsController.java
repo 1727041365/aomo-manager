@@ -2,6 +2,7 @@ package com.yupi.springbootinit.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yupi.springbootinit.annotation.IpWhitelist;
 import com.yupi.springbootinit.common.BaseResponse;
 import com.yupi.springbootinit.common.ErrorCode;
 import com.yupi.springbootinit.common.ResultUtils;
@@ -68,6 +69,7 @@ public class SchoolProgramsController {
 
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @IpWhitelist({"144.34.224.28"})
     public BaseResponse<String> add(@ModelAttribute SchoolDto schoolDto
             , @RequestPart("file") MultipartFile imageFile) {
         if (schoolDto == null) {
@@ -99,14 +101,20 @@ public class SchoolProgramsController {
      */
     @PostMapping("/like")
     public BaseResponse<List<SchoolVo>> like(@RequestParam String schoolName) {
-        if (schoolName == null) {
+        if (schoolName == null || schoolName.isEmpty()) {
             return ResultUtils.error(ErrorCode.PARAMS_ERROR, "参数为空");
         }
         if (!schoolName.matches("^[a-zA-Z0-9\\s]+$")) {
             return ResultUtils.error(ErrorCode.PARAMS_ERROR, "参数只能包含字母、数字和空格");
         }
-        if ("Xian".equals(schoolName)||"xian".equals(schoolName)){
-            schoolName="Xi'an";
+        if ("Xian".equals(schoolName) || "xian".equals(schoolName)) {
+            schoolName = "Xi'an";
+        } else {
+            // 将schoolName首字母大写
+            char firstChar = schoolName.charAt(0);
+            if (Character.isLetter(firstChar)) {
+                schoolName = Character.toUpperCase(firstChar) + schoolName.substring(1);
+            }
         }
         //模糊查询学校
         List<SchoolVo> schoolVo = schoolService.getLike(schoolName);

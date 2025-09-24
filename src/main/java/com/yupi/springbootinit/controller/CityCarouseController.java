@@ -1,5 +1,6 @@
 package com.yupi.springbootinit.controller;
 
+import com.yupi.springbootinit.annotation.IpWhitelist;
 import com.yupi.springbootinit.common.BaseResponse;
 import com.yupi.springbootinit.common.ErrorCode;
 import com.yupi.springbootinit.common.ResultUtils;
@@ -25,6 +26,7 @@ public class CityCarouseController {
         return ResultUtils.success(cityCarouselVoList);
     }
     @RequestMapping("/save")
+    @IpWhitelist({"144.34.224.28"})
     public BaseResponse<String> saveCityCarousel(@RequestBody CityCarouselDto cityCarouselDto){
         boolean save = cityCarouselService.saveOrUpdate(cityCarouselDto);
         if (!save){

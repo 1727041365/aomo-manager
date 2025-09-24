@@ -2,6 +2,7 @@ package com.yupi.springbootinit.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.yupi.springbootinit.annotation.IpWhitelist;
 import com.yupi.springbootinit.common.BaseResponse;
 import com.yupi.springbootinit.common.ErrorCode;
 import com.yupi.springbootinit.common.ResultUtils;
@@ -31,6 +32,7 @@ public class SchoolDetailController {
     public record Phd(Long id, String schoolPhd) {}
     public record Scenery(Long id, String schoolScenery) {}
     @PostMapping("/create")
+    @IpWhitelist({"144.34.224.28"})
     public BaseResponse<String> create(@RequestBody SchoolInfoDTO schoolInfoDTO) throws Exception {
        if (schoolInfoDTO.getSchoolId()==null){
            return ResultUtils.error(ErrorCode.PARAMS_ERROR,"id参数为空");
